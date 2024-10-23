@@ -41,12 +41,12 @@ public sealed class LavalinkExtension : BaseExtension
 	/// <summary>
 	///     Gets the rest client used to communicate with the lavalink server.
 	/// </summary>
-	private LavalinkRestClient REST { get; set; } = null!;
+	private LavalinkRestClient? REST { get; set; } = null;
 
 	/// <summary>
 	///     Gets the lavalink configuration.
 	/// </summary>
-	private LavalinkConfiguration CONFIGURATION { get; set; } = null!;
+	private LavalinkConfiguration? CONFIGURATION { get; set; } = null;
 
 	/// <summary>
 	///     Triggered whenever a session disconnects.
@@ -105,9 +105,11 @@ public sealed class LavalinkExtension : BaseExtension
 				if (headerValues.First() != "4")
 					throw new("Lavalink v4 is required");
 		}
-		catch (Exception)
+		catch (Exception e)
 		{
-			throw new("Something went wrong when determining the lavalink server version :/");
+			this.CONFIGURATION = null;
+			this.REST = null;
+			throw new("Something went wrong when determining the Lavalink server version :/", e);
 		}
 
 		var con = new LavalinkSession(this.Client, this, config);
@@ -141,7 +143,7 @@ public sealed class LavalinkExtension : BaseExtension
 	/// </summary>
 	/// <param name="region">The region to compare with the session's <see cref="LavalinkConfiguration.Region" />, if any.</param>
 	/// <returns>The least load affected session connection, or null if no sessions are present.</returns>
-	public LavalinkSession? GetIdealSession(DiscordVoiceRegion? region = null)
+	public LavalinkSession GetIdealSession(DiscordVoiceRegion? region = null)
 	{
 		if (this._connectedSessions.Count <= 1)
 			return this._connectedSessions.Values.FirstOrDefault()!;

@@ -19,12 +19,11 @@ jobs:
               with:
                   token: ${{ secrets.NYUW_TOKEN_GH }}
             - name: Setup .NET
-              uses: actions/setup-dotnet@v4.0.1
+              uses: actions/setup-dotnet@v4.1.0
               with:
                   dotnet-version: |
-                      9.0.100-preview.7.24407.12
+                      9.x
                       8.x
-                      7.x
             - name: Git fetch unshallow
               run: git fetch --unshallow
             - name: Install DocFX
@@ -35,8 +34,6 @@ jobs:
               run: dotnet build -c Release --no-restore -v minimal -f net8.0 DisCatSharp.sln
               timeout-minutes: 7
               continue-on-error: true
-            #- name: Add Custom Plugins
-            #  run: cp -R DisCatSharp.Docs/dcs/plugins/* /home/runner/.dotnet/tools/.store/docfx/2.67.0/docfx/2.67.0/tools/net7.0/any/
             - name: Build Docs
               run: docfx DisCatSharp.Docs/docfx.json
             - name: Pack Docs
